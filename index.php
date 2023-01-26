@@ -70,13 +70,14 @@ $projects = array(
 
 
 $order=isset($_GET['order'])?$_GET['order']:"";
-
+$dir=isset($_GET['dir'])?$_GET['dir']:"";
+$invert=($dir=='asc')?1:-1;
 /*
 usort($projects, function ($a, $b) use ($order){
    return $a[$order] <=> $b[$order];
 });
 */
-usort($projects, fn ($a, $b)=> $a[$order] <=> $b[$order]);
+usort($projects, fn ($a, $b)=> ($a[$order] <=> $b[$order]) * $invert);
 /*
 usort($projects, function ($a, $b) use ($order){
     if ($order=='price'){
@@ -99,6 +100,16 @@ if ($order=='year') {
     });
 }
 */
+
+ function printTableLink($caption, $field,$order, $dir){
+      $dir=($order==$field && $dir=='asc')?'desc':'asc';
+
+      echo "<a href='?order=$field&dir=$dir'>";
+      echo "$caption";
+      echo ($dir=='asc')? "&downarrow;":"&uparrow;";
+      echo "</a>";
+ }
+
 
 
  require_once "gediminas.php";
@@ -128,15 +139,13 @@ if ($order=='year') {
                                 <tr>
                                     <th>Projekto pavadinimas</th>
                                     <th>
-                                        <a href="?order=year">
-                                        Metai
-                                        </a>
+                                        <?php printTableLink('Metai', 'year', $order, $dir) ?>
                                     </th>
-                                    <th>Programa</th>
                                     <th>
-                                        <a href="?order=price">
-                                            Suma
-                                        </a>
+                                        <?php printTableLink('Programa', 'program',$order, $dir) ?>
+                                    </th>
+                                    <th>
+                                        <?php printTableLink('Kaina', 'price',$order, $dir) ?>
                                     </th>
                                 </tr>
                             </thead>
